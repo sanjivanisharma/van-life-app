@@ -1,20 +1,18 @@
-import { useState, useEffect } from "react"
-import { Link, useSearchParams } from "react-router-dom"
+import { Link, useLoaderData, useSearchParams } from "react-router-dom"
+import { getVans } from "../../api"
+
+export function loader() {
+    return getVans()
+}
 
 export default function Vans() {
-    const [vans, setVans] = useState([])
     const [searchParams, setSearchParams] = useSearchParams()
+    const vans = useLoaderData()
 
     const typeFilter = searchParams.get("type")
     const filteredVans = typeFilter ? vans.filter(van => van.type === typeFilter) : vans
 
-    useEffect(() => {
-        fetch("/api/vans")
-            .then((response) => response.json())
-            .then(data => setVans(data.vans))
-    }, [])
-
-    const vanElements = filteredVans.map(van => (
+    const vanElements = filteredVans?.map(van => (
         <div key={van.id} className="van-tile">
             <Link
                 to={van.id}
